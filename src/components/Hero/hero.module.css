@@ -1,0 +1,138 @@
+.hero {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 5%;
+        position: relative;
+        background-color: var(--bg);
+        color: var(--text);
+}
+
+.content {
+        flex: 1;
+        max-width: 600px;
+}
+
+.title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+}
+
+.subtitle {
+        font-size: 1.2rem;
+        color: var(--text-soft);
+        margin-bottom: 2rem;
+}
+
+.cta {
+        display: flex;
+        gap: 1rem;
+}
+
+.button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+}
+
+.primaryButton {
+        background-color: var(--color-primary);
+        color: var(--text);
+}
+
+.primaryButton:hover {
+        background-color: var(--btn);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.secondaryButton {
+        background-color: transparent;
+        color: var(--color-primary);
+        border: 2px solid var(--color-primary);
+}
+
+.secondaryButton:hover {
+        background-color: rgba(31, 100, 178, 0.1);
+}
+
+/* New image container */
+.imageContainer {
+        flex: 1;
+        height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+}
+
+.heroImage {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+}
+
+/* Info panel for rotation and zoom info */
+.infoPanel {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        color: var(--bg);
+}
+
+.infoPanel p {
+        margin: 0;
+        line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+        .hero {
+                flex-direction: column;
+                text-align: center;
+        }
+
+        .content,
+        .imageContainer {
+                max-width: 100%;
+        }
+
+        .cta {
+                justify-content: center;
+        }
+
+        .imageContainer {
+                height: 400px;
+                margin-top: 2rem;
+        }
+}
+
+@media (max-width: 768px) {
+        .title {
+                font-size: 2.5rem;
+        }
+
+        .subtitle {
+                font-size: 1rem;
+        }
+
+        .imageContainer {
+                height: 300px;
+        }
+
+        .infoPanel {
+                top: 10px;
+                right: 10px;
+        }
+}

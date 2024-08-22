@@ -1,0 +1,94 @@
+:root {
+        --bg: #0d0c22;
+        --bg2: rgb(105, 98, 230);
+        --bg-soft: #2d2b42;
+        --text: white;
+        --text-soft: #e5e5e5;
+        --color-primary: rgb(31, 100, 178);
+        --btn: #3673fd;
+}
+
+* {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+}
+
+body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+}
+
+a {
+        text-decoration: none;
+        color: inherit;
+}
+
+/* Style for the floating translation icon */
+#google_translate_element {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background-color: var(--bg-soft);
+        padding: 10px;
+        border-radius: 50%;
+        transition: all 0.3s ease-in-out;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        cursor: pointer;
+}
+
+#google_translate_element:hover {
+        border-radius: 12px;
+        padding: 10px 20px;
+        width: auto;
+        height: auto;
+}
+
+#google_translate_element img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+}
+
+#google_translate_element:hover .text {
+        display: block;
+        margin-left: 10px;
+}
+
+#google_translate_element .text {
+        display: none;
+        color: var(--text);
+        font-size: 14px;
+        white-space: nowrap;
+}
+
+.container {
+        width: 100%;
+        /* Make container width 100% of the viewport */
+        /* max-width: 1536px; */
+        /* Set a max width */
+        /* margin: auto; */
+        /* Add padding to avoid content touching the edges */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100vh;
+}
+
+.btn__primary {
+        background-color: var(--btn);
+}

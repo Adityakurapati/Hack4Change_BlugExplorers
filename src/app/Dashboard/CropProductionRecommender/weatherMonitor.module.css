@@ -1,0 +1,149 @@
+.container {
+        display: flex;
+        min-height: 100vh;
+
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--bg);
+        color: var(--text);
+        padding: 2rem;
+}
+
+.header {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2rem;
+}
+
+.title {
+        font-size: 2rem;
+        font-weight: bold;
+}
+
+.content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns for the cards */
+        grid-gap: 2rem;
+        width: 100%;
+}
+
+.section {
+        background-color: var(--bg-soft);
+        border-radius: 8px;
+        padding: 1.5rem;
+}
+
+.sectionTitle {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+}
+
+.chart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+}
+
+.temperature,
+.humidity {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+}
+
+.pastForecast {
+        background-color: var(--bg-soft);
+        border-radius: 8px;
+        padding: 1.5rem;
+        width: 100%;
+}
+
+.forecastItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1.5rem;
+}
+
+.forecastDate {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+}
+
+.forecastWeather {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+}
+
+.forecastIcon {
+        margin-right: 0.5rem;
+}
+
+.forecastTemperature {
+        font-size: 1.5rem;
+        font-weight: bold;
+}
+
+.forecastTime {
+        font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+        .content {
+                grid-template-columns: 1fr;
+        }
+}
+
+/* Below Card */
+/* Add these styles to your existing CSS file */
+
+.extraSection {
+        grid-column: span 3;
+        padding: 2rem;
+        background-color: var(--bg-soft);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-out;
+}
+
+.extraSectionTitle {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: var(--text);
+}
+
+.blockContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        /* Responsive grid for blocks */
+        gap: 1rem;
+}
+
+.block {
+        background-color: var(--bg);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        font-size: .8rem;
+}
+
+.block:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.value {
+        font-weight: bold;
+        color: var(--text);
+        margin-top: 0.5rem;
+}
+
+.extraSection .primary {
+        color: var(--bg-soft);
+        padding: .8rem;
+}

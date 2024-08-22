@@ -1,0 +1,167 @@
+/* Container for the entire component */
+.container {
+        display: flex;
+        background-color: var(--bg);
+        color: var(--text-soft);
+        height: 100vh;
+        /* Use full viewport height */
+        padding: 20px;
+        gap: 20px;
+        box-sizing: border-box;
+        /* Include padding in the height calculation */
+        overflow: hidden;
+        /* Prevent overflow issues */
+}
+
+/* Main sections */
+.machineList,
+.rightSection {
+        flex: 1;
+        background-color: var(--bg-soft);
+        padding: 20px;
+        border-radius: 8px;
+        box-sizing: border-box;
+        /* Include padding in the height calculation */
+        overflow-y: auto;
+        /* Ensure scroll if content overflows */
+}
+
+/* Specific styles for machine list */
+.machineList {
+        max-height: calc(80vh - 40px);
+        /* Adjust for padding and any fixed headers */
+}
+
+/* Styling for each machine item */
+.machineItem {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: var(--primary-dark);
+        border-radius: 4px;
+        box-sizing: border-box;
+        gap: .8rem;
+        background-color: var(--bg);
+}
+
+.machineImage {
+        border-radius: 50%;
+        margin-right: 10px;
+}
+
+.machineName {
+        flex-grow: 1;
+        font-size: 18px;
+        color: var(--text);
+}
+
+.locationIcon {
+        margin-right: 10px;
+}
+
+.getButton {
+        background-color: var(--bg-soft);
+        color: var(--text-light);
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        /* Adjusted font size */
+}
+
+/* Chart container styling */
+.chartContainer {
+        height: 300px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+}
+
+/* Add machine section styles */
+.addMachineSection {
+        position: relative;
+}
+
+.addIcon {
+        position: absolute;
+        top: -30px;
+        /* Adjusted to fit well */
+        right: 0;
+        background-color: var(--accent);
+        color: var(--text-light);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        /* Ensure it appears above other content */
+}
+
+.addMachineForm {
+        background-color: var(--primary-dark);
+        padding-top: 54px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* Added shadow for better separation */
+}
+
+/* Form group and input styles */
+.formGroup {
+        margin-bottom: 15px;
+}
+
+.input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background-color: var(--bg);
+        color: var(--text-light);
+        border-radius: 4px;
+}
+
+.addButton {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--accent);
+        color: var(--text-light);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+}
+
+/* Headings styles */
+.addMachineForm h3,
+.machineList h2 {
+        margin: 0;
+        margin-bottom: 20px;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+        .container {
+                flex-direction: column;
+        }
+
+        .addIcon {
+                top: -20px;
+                /* Adjust for smaller screens */
+        }
+}
+
+/* Add this for the chart tooltip */
+.pie-tooltip {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: var(--text);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+}

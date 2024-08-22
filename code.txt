@@ -1,0 +1,357 @@
+step1:understand below code correctly line by line 
+blog/page.jsx
+'use client'
+import React, { useEffect, useState } from 'react';
+import PostCard from '../postCard/postCard';
+import styles from './blog.module.css';
+import { getPosts } from '@/lib/data';
+
+const BlogPage=() =>
+{
+        const [ posts, setPosts ]=useState( [] );
+        const [ loading, setLoading ]=useState( true );
+        const [ error, setError ]=useState( null );
+
+        // blog/page.jsx
+        useEffect( () =>
+        {
+                const fetchPosts=async () =>
+                {
+                        try
+                        {
+                                const fetchedPosts=await getPosts();
+                                console.warn( `POsts : ${ fetchedPosts }` )
+                                setPosts( fetchedPosts );
+                                setLoading( false );
+                        } catch ( error )
+                        {
+                                setError( error.message );
+                                setLoading( false );
+                        }
+                };
+
+                fetchPosts();
+        }, [] );
+
+
+        if ( loading ) return <div>Loading...</div>;
+        if ( error ) return <div>Error: { error }</div>;
+
+        return (
+                <section className={ styles.container }>
+                        { posts.map( ( post ) => (
+                                <div className={ styles.post } key={ post._id }>
+                                        <PostCard post={ post } />
+                                </div>
+                        ) ) }
+                </section>
+        );
+};
+
+export default BlogPage;
+
+step 2:understand below code correctly line by line 
+PostCard.jsx
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import styles from './postCard.module.css';
+
+const PostCard=( { post } ) =>
+{
+        return (
+                <section className={ styles.container }>
+                        <article className={ styles.top }>
+                                <div className={ styles.imgContainer }>
+                                        <Image src={ post.img } alt='' fill className={ styles.img } />
+                                </div>
+                                <span className={ styles.date }>10.7.24</span>
+                        </article>
+                        <article className={ styles.bottom }>
+                                <h1 className={ styles.title }>{ post.title }</h1>
+                                <p>{ post.desc }</p>
+                                <Link href={ `/blog/${ post.slug }` } className={ styles.readmorebtn }>Read More</Link>
+                        </article>
+                </section>
+        );
+}
+
+export default PostCard;
+
+step 3:understand below code correctly line by line 
+blog/[slug]/page.jsx
+'use client'
+
+import React, { useEffect, useState, Suspense } from 'react';
+import styles from './singlepost.module.css';
+import Image from 'next/image';
+import PostUser from '@/components/postUser/postUser';
+import { getPost } from '@/lib/data';
+
+const SinglePostPage=( { params } ) =>
+{
+        const { slug }=params;
+        const [ post, setPost ]=useState( null );
+        const [ loading, setLoading ]=useState( true );
+        const [ error, setError ]=useState( null );
+
+        const fetchPost=async () =>
+        {
+                try
+                {
+                        const post=await getPost( { id: slug } );
+                        setPost( post );
+                } catch ( error )
+                {
+                        setError( "Failed to load post" );
+                } finally
+                {
+                        setLoading( false );
+                }
+        };
+
+        fetchPost();
+
+        if ( loading )
+        {
+                return <div>Loading...</div>;
+        }
+
+        if ( error )
+        {
+                return <div>{ error }</div>;
+        }
+
+        if ( !post )
+        {
+                return <div>Post not found</div>;
+        }
+
+        return (
+                <section className={ styles.container }>
+                        <article className={ styles.imgContainer }>
+                                <Image src={ post.img } alt='About image' fill className={ styles.img } />
+                        </article>
+                        <article className={ styles.textContainer }>
+                                <h1 className={ styles.title }>{ post.title }</h1>
+                                <div className={ styles.detail }>
+                                        <Image src={ post.img } alt='User image' width={ 50 } height={ 50 } className={ styles.userimg } />
+                                        <Suspense fallback={ <div>Loading...</div> }>
+                                                <PostUser userId={ post.userId } />
+                                        </Suspense>
+                                        <div className={ styles.detailedText }>
+                                                <span className={ styles.detailedTitle }>Published</span>
+                                                <span className={ styles.detailedValue }>{ post.createdAt.toString().slice( 0, 16 ) }</span>
+                                        </div>
+                                </div>
+                                <p>{ post.body }</p>
+                        </article>
+                </section>
+        );
+};
+
+export default SinglePostPage;
+
+step 4:understand below code correctly line by line 
+/components/postUser.jsx
+'use client'
+
+import React, { useEffect, useState } from 'react';
+import styles from './postUser.module.css'; // Ensure the CSS module file exists
+import { getUser } from '@/lib/data';
+
+const PostUser=( { userId } ) =>
+{
+        const [ user, setUser ]=useState( null );
+        const [ loading, setLoading ]=useState( true );
+        const [ error, setError ]=useState( null );
+
+        const fetchUser=async () =>
+        {
+                try
+                {
+                        const user=await getUser( { id: userId } );
+                        console.warn( `Users :    ${ user }` )
+                        setUser( user );
+                } catch ( error )
+                {
+                        setError( "Failed to load user" );
+                } finally
+                {
+                        setLoading( false );
+                }
+        };
+
+        fetchUser();
+
+        if ( loading )
+        {
+                return <div>Loading...</div>;
+        }
+
+        if ( error )
+        {
+                return <div>{ error }</div>;
+        }
+
+        if ( !user )
+        {
+                return <div>User not found</div>;
+        }
+
+        return (
+                <div className={ styles.detailedText }>
+                        <span className={ styles.detailTitle }>Author</span>
+                        <span className={ styles.detailValue }>{ user.username }</span>
+                </div>
+        );
+}
+
+export default PostUser;
+
+step 5:understand below code correctly line by line 
+lib/data.js
+import { UserModel, PostModel } from './model';
+import { connectToDB } from './utils';
+
+const getPosts=async () =>
+{
+        try
+        {
+                await connectToDB();
+                const posts=await PostModel.find();
+                return posts;
+        } catch ( err )
+        {
+                throw new Error( "Failed To Load The Posts: "+err );
+        }
+};
+
+const getPost=async ( { slug } ) =>
+{
+        try
+        {
+                await connectToDB();
+                const post=await PostModel.findOne( { slug } );
+                return post;
+        } catch ( err )
+        {
+                throw new Error( "Failed To Load The Post: "+err );
+        }
+};
+
+export const getUser=async ( { id } ) =>
+{
+        try
+        {
+                await connectToDB();
+                const user=await UserModel.findById( id );
+                return user;
+        } catch ( err )
+        {
+                throw new Error( "Failed To Load The User: "+err );
+        }
+};
+
+const getAllUsers=async () =>
+{
+        try
+        {
+                await connectToDB();
+                const users=await UserModel.find();
+                return users;
+        } catch ( err )
+        {
+                throw new Error( "Failed To Load The Users: "+err );
+        }
+};
+
+export { getPosts, getPost, getAllUsers };
+
+step 6:understand below code correctly line by line 
+lib/model.js
+import mongoose from 'mongoose';
+
+import { connectToDB } from './utils';
+
+( async () => await connectToDB() )();
+
+const userSchema=new mongoose.Schema( {
+        username: { type: String, required: true, unique: true, min: 3, max: 20 },
+        email: { type: String, required: true, unique: true, max: 50 },
+        password: { type: String, required: true, min: 6 },
+        img: { type: String },
+        isAdmin: { type: Boolean, default: false },
+}, { timestamps: true } );
+
+const postSchema=new mongoose.Schema( {
+        title: { type: String, required: true, max: 100 },
+        desc: { type: String, required: true },
+        img: { type: String },
+        userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+        slug: { type: String, required: true, unique: true },
+}, { timestamps: true } );
+
+export const UserModel=mongoose.models.User||mongoose.model( 'User', userSchema );
+export const PostModel=mongoose.models.Post||mongoose.model( 'Post', postSchema );
+
+// lib/model.js
+console.log( "UserModel:", UserModel );
+console.log( "PostModel:", PostModel );
+
+step7:understand below code correctly line by line 
+lib/utils.js
+const mongoose=require( "mongoose" );
+
+const connectToDB=async () =>
+{
+        console.log( "Starteing Connect TO Database " );
+        const connection={};
+        try
+        {
+                if ( connection.isConnected )
+                {
+                        console.log( "Database Already Connected" );
+                        return;
+                }
+                const db=await mongoose.connect( 'mongodb+srv://champ:champ@cluster0.cfmhwiy.mongodb.net/Oarin?retryWrites=true&w=majority&appName=Cluster0' );
+                console.log( "Connected To Mongo DB Successfully" );
+                connection.isConnected=db.connections[ 0 ].readyState;
+        } catch ( error )
+        {
+                throw new Error( error );
+        }
+};
+mongoose.connection.on( 'connected', () => console.log( 'connected' ) );
+mongoose.connection.on( 'open', () => console.log( 'open' ) );
+mongoose.connection.on( 'disconnected', () => console.log( 'disconnected' ) );
+mongoose.connection.on( 'reconnected', () => console.log( 'reconnected' ) );
+mongoose.connection.on( 'disconnecting', () => console.log( 'disconnecting' ) );
+mongoose.connection.on( 'close', () => console.log( 'close' ) );
+
+export { connectToDB };
+
+step 8:understand below code correctly line by line 
+next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig={
+        reactStrictMode: true,
+        webpack: ( config ) =>
+        {
+                config.experiments={ ...config.experiments, topLevelAwait: true };
+                return config;
+        },
+};
+
+export default nextConfig;
+
+
+step 9:understand the sequence below provided specify the how project gets running 
+Starteing Connect TO Database 
+UserModel: Model { User }
+PostModel: Model { Post }
+Connected To Mongo DB Successfully
+ GET /blog 200 in 7101ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1324ms (340 modules)
+ GET /favicon.ico 200 in 2865ms

@@ -1,0 +1,166 @@
+/* Container for the entire component */
+.container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+        font-family: Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text-soft);
+}
+
+/* Navbar with dropdown filters for state and city */
+.navBar {
+        background-color: var(--bg2);
+        padding: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        z-index: 100;
+        color: var(--text);
+}
+
+/* Wrapper for sidebar and main content */
+.contentWrapper {
+        display: flex;
+        flex: 1;
+        margin-top: 60px;
+        /* Adjusted to match the height of the navbar */
+}
+
+/* Sidebar with the Post Hiring button */
+.sidebar {
+        background-color: var(--bg-soft);
+        width: 200px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+}
+
+/* Post Hiring button */
+.postHiringButton {
+        background-color: var(--btn);
+        color: var(--text);
+        border: none;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+        margin-bottom: 20px;
+}
+
+.postHiringButton:hover {
+        background-color: var(--color-primary);
+}
+
+/* Main content area for labor list or form */
+.mainContent {
+        flex: 1;
+        padding: 20px;
+        background-color: var(--bg);
+        overflow-y: auto;
+        /* Ensure scrolling for the main content */
+}
+
+/* Labour request list styling */
+.labourList {
+        background-color: var(--bg-soft);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 120px);
+        /* Adjust height to fit the viewport and navbar height */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+}
+
+/* Labour request card styling */
+.labourRequestCard {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        margin-bottom: 10px;
+        background-color: var(--bg);
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown styling */
+.dropdown {
+        padding: 10px;
+        font-size: 16px;
+        color: var(--text-soft);
+        background-color: var(--bg-soft);
+        border-radius: 4px;
+        border: 1px solid var(--color-primary);
+}
+
+
+.labourDetails {
+        flex: 1;
+        margin-left: 15px;
+}
+
+.labourDetails h3 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text-soft);
+}
+
+.labourDetails p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: var(--text-soft);
+}
+
+/* Button for checkout */
+.checkoutButton {
+        background-color: var(--btn);
+        color: var(--text);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+}
+
+.checkoutButton:hover {
+        background-color: var(--color-primary);
+}
+
+
+
+/* Labour big */
+/* Selected Labour Card */
+.selectedLabourCard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: var(--bg-soft);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Back button */
+.backButton {
+        background-color: var(--btn);
+        color: var(--text);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: 16px;
+}
+
+.backButton:hover {
+        background-color: var(--color-primary);
+}

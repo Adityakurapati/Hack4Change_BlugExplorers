@@ -1,0 +1,104 @@
+.container {
+        background-color: var(--bg);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        animation: fadeIn 1s ease-out;
+}
+
+.filters {
+        margin-top: 9rem;
+}
+
+.filters select {
+        background-color: var(--bg-soft);
+        border: 1px solid var(--color-primary);
+        color: var(--text);
+        padding: 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+        font-size: 1rem;
+        outline: none;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.filters select:focus {
+        background-color: var(--bg);
+        border-color: var(--btn);
+}
+
+.filters button {
+        background-color: var(--btn);
+        color: var(--text);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+        background-color: var(--color-primary);
+}
+
+.container h2 {
+        color: var(--text);
+        margin-bottom: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+}
+
+.chartWrapper {
+        background-color: var(--bg-soft);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        margin-top: 20px;
+        color: var(--text);
+        font-size: 1.2rem;
+        animation: slideIn 0.5s ease-out;
+}
+
+.chartWrapper canvas {
+        max-width: 100%;
+        height: auto;
+}
+
+.error {
+        color: var(--text-soft);
+        font-size: 1rem;
+        margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+        .container {
+                padding: 20px;
+        }
+}
+
+@keyframes fadeIn {
+        from {
+                opacity: 0;
+        }
+
+        to {
+                opacity: 1;
+        }
+}
+
+@keyframes slideIn {
+        from {
+                transform: translateY(-10px);
+                opacity: 0;
+        }
+
+        to {
+                transform: translateY(0);
+                opacity: 1;
+        }
+}
