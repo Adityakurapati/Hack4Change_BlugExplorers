@@ -2,12 +2,39 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './remoteFarm.module.css';
-
 const labourers=[
-        { id: 1, name: 'Farm Cleaner', image: '/dashboard/labour.png' },
-        { id: 2, name: 'Farm Worker', image: '/dashboard/labour.png' },
-        { id: 3, name: 'Farm Helper', image: '/dashboard/labour.png' },
-        { id: 4, name: 'Field Assistant', image: '/dashboard/labour.png' },
+        {
+                id: 1,
+                name: 'Farm Cleaner',
+                image: '/dashboard/labour.png',
+                company: 'AgriTech Solutions',
+                requirement: 'Cleaning and maintenance of farm',
+                place: 'Rural Area 1'
+        },
+        {
+                id: 2,
+                name: 'Farm Worker',
+                image: '/dashboard/labour.png',
+                company: 'Green Farms Ltd.',
+                requirement: 'General farm work including planting and harvesting',
+                place: 'Rural Area 2'
+        },
+        {
+                id: 3,
+                name: 'Farm Helper',
+                image: '/dashboard/labour.png',
+                company: 'FarmCo',
+                requirement: 'Assisting in daily farm operations',
+                place: 'Rural Area 3'
+        },
+        {
+                id: 4,
+                name: 'Field Assistant',
+                image: '/dashboard/labour.png',
+                company: 'AgriWorks Inc.',
+                requirement: 'Field work and crop monitoring',
+                place: 'Rural Area 4'
+        },
 ];
 
 const FarmIndustryPartnership=() =>
@@ -39,7 +66,7 @@ const FarmIndustryPartnership=() =>
                                                         name="purpose"
                                                         value={ labourRequest.purpose }
                                                         onChange={ handleInputChange }
-                                                        placeholder="Why You Need the Labour"
+                                                        placeholder="Company Name"
                                                         className={ styles.input }
                                                         required
                                                 />
@@ -51,7 +78,7 @@ const FarmIndustryPartnership=() =>
                                                         name="production"
                                                         value={ labourRequest.production }
                                                         onChange={ handleInputChange }
-                                                        placeholder="What Is the Production"
+                                                        placeholder="Crop Production Requirement"
                                                         className={ styles.input }
                                                         required
                                                 />
@@ -63,7 +90,19 @@ const FarmIndustryPartnership=() =>
                                                         name="advancePayment"
                                                         value={ labourRequest.advancePayment }
                                                         onChange={ handleInputChange }
-                                                        placeholder="How Much You Can Give in Advance"
+                                                        placeholder="Quantity"
+                                                        className={ styles.input }
+                                                        required
+                                                />
+                                        </div>
+                                        <div className={ styles.inputGroup }>
+                                                <span className={ styles.inputIcon }>💵</span>
+                                                <input
+                                                        type="text"
+                                                        name="advancePayment"
+                                                        value={ labourRequest.advancePayment }
+                                                        onChange={ handleInputChange }
+                                                        placeholder="Quantity"
                                                         className={ styles.input }
                                                         required
                                                 />
@@ -77,25 +116,31 @@ const FarmIndustryPartnership=() =>
                         </div>
 
                         <div className={ styles.labourerList }>
-                                <h2>Available Labourers</h2>
-                                { labourers.map( ( labourer ) => (
-                                        <div key={ labourer.id } className={ styles.labourerItem }>
-                                                <Image src={ labourer.image } alt={ labourer.name } width={ 50 } height={ 50 } className={ styles.labourerImage } />
-                                                <span className={ styles.labourerName }>{ labourer.name }</span>
-                                                <button className={ styles.acceptButton }>Accept</button>
-                                                <button className={ styles.rejectButton }>Reject</button>
-                                        </div>
-                                ) ) }
-                                <div className={ styles.labourerDetails }>
-                                        <div className={ styles.detailItem }>
-                                                <span className={ styles.detailIcon }>📍</span>
-                                                <span>Solapur</span>
-                                        </div>
-                                        <div className={ styles.detailItem }>
-                                                <span className={ styles.detailIcon }>💰</span>
-                                                <span>1000/day</span>
-                                        </div>
+                                <h2>Requirements From Industrialist</h2>
+                                <div className={ styles.labourerContainer }>
+                                        { labourers.map( ( labourer ) => (
+                                                <div key={ labourer.id } className={ styles.labourerCard }>
+                                                        <Image
+                                                                src={ labourer.image }
+                                                                alt={ labourer.name }
+                                                                width={ 150 }
+                                                                height={ 150 }
+                                                                className={ styles.labourerImage }
+                                                        />
+                                                        <div className={ styles.labourerDetails }>
+                                                                <h2 className={ styles.labourerName }>{ labourer.name }</h2>
+                                                                <p className={ styles.companyName }>{ labourer.company }</p>
+                                                                <p className={ styles.requirement }>{ labourer.requirement }</p>
+                                                                <p className={ styles.place }>{ labourer.place }</p>
+                                                        </div>
+                                                        <div className={ styles.labourerActions }>
+                                                                <button className={ styles.acceptButton }>Accept</button>
+                                                                <button className={ styles.rejectButton }>Reject</button>
+                                                        </div>
+                                                </div>
+                                        ) ) }
                                 </div>
+
                         </div>
                 </div>
         );

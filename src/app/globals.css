@@ -1,4 +1,4 @@
-:root {
+/* :root {
         --bg: #0d0c22;
         --bg2: rgb(105, 98, 230);
         --bg-soft: #2d2b42;
@@ -6,7 +6,26 @@
         --text-soft: #e5e5e5;
         --color-primary: rgb(31, 100, 178);
         --btn: #3673fd;
+} */
+:root {
+        --bg: #e8f0f2;
+        /* Light mint background */
+        --bg2: #bcccdc;
+        /* Soft slate blue for highlights */
+        --bg-soft: #ffffff;
+        /* Clean white for contrast */
+        --text: #333333;
+        /* Almost black for strong text contrast */
+        --text-soft: #4f4f4f;
+        /* Dark grey for secondary text */
+        --color-primary: #4a7c59;
+        /* Deep forest green as the primary color */
+        --btn: #9c6644;
+        /* Warm terracotta for buttons */
 }
+
+
+
 
 * {
         margin: 0;

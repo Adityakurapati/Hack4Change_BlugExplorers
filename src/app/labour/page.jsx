@@ -2,8 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './labourService.module.css';
 import LabourForm from './LabourForm';
+import LoadingSpinner from './LoadingSpinner';
+import { fill } from 'three/src/extras/TextureUtils';
 
 const LabourService=() =>
 {
@@ -22,8 +25,8 @@ const LabourService=() =>
         const [ stateOptions, setStateOptions ]=useState( [] );
         const [ cityOptions, setCityOptions ]=useState( [] );
         const [ selectedLabor, setSelectedLabor ]=useState( null );
+        const [ loading, setLoading ]=useState( true );
 
-        // Fetch states and cities from JSON
         useEffect( () =>
         {
                 const fetchStateData=async () =>
@@ -31,57 +34,43 @@ const LabourService=() =>
                         try
                         {
                                 const response=await axios.get( '/stateDistricts.json' );
-                                const data=response.data;
-                                setStateOptions( Object.keys( data ) );
+                                setStateOptions( Object.keys( response.data ) );
                         } catch ( error )
                         {
                                 console.error( 'Failed to fetch states', error );
                         }
                 };
-
                 fetchStateData();
         }, [] );
 
-        // Update city options when the state changes
         useEffect( () =>
         {
                 const fetchCityOptions=async () =>
                 {
+                        if ( !stateFilter )
+                        {
+                                setCityOptions( [] );
+                                setCityFilter( '' );
+                                return;
+                        }
                         try
                         {
                                 const response=await axios.get( '/stateDistricts.json' );
-                                const data=response.data;
-                                if ( data[ stateFilter ] )
-                                {
-                                        setCityOptions( data[ stateFilter ] );
-                                        // Reset city filter if state changes
-                                        setCityFilter( '' );
-                                } else
-                                {
-                                        setCityOptions( [] );
-                                        setCityFilter( '' );
-                                }
+                                setCityOptions( response.data[ stateFilter ]||[] );
+                                setCityFilter( '' );
                         } catch ( error )
                         {
                                 console.error( 'Failed to fetch cities', error );
                         }
                 };
-
-                if ( stateFilter )
-                {
-                        fetchCityOptions();
-                } else
-                {
-                        setCityOptions( [] );
-                        setCityFilter( '' );
-                }
+                fetchCityOptions();
         }, [ stateFilter ] );
 
-        // Fetch labor requests on component mount
         useEffect( () =>
         {
                 const fetchLabors=async () =>
                 {
+                        setLoading( true );
                         try
                         {
                                 const response=await axios.get( '/api/labours/get' );
@@ -89,22 +78,28 @@ const LabourService=() =>
                         } catch ( error )
                         {
                                 console.error( 'Failed to fetch labors', error );
+                        } finally
+                        {
+                                setLoading( false );
                         }
                 };
-
                 fetchLabors();
         }, [] );
 
-        // Filtered labor requests based on state and city
         const filteredLaborRequests=laborRequests.filter(
                 ( labor ) =>
-                        ( stateFilter? labor.state?.toLowerCase()===stateFilter.toLowerCase():true )&&
-                        ( cityFilter? labor.city?.toLowerCase()===cityFilter.toLowerCase():true )
+                        ( !stateFilter||labor.state?.toLowerCase()===stateFilter.toLowerCase() )&&
+                        ( !cityFilter||labor.city?.toLowerCase()===cityFilter.toLowerCase() )
         );
 
         return (
                 <div className={ styles.container }>
-                        <div className={ styles.navBar }>
+                        <motion.div
+                                className={ styles.navBar }
+                                initial={ { y: -50, opacity: 0 } }
+                                animate={ { y: 0, opacity: 1 } }
+                                transition={ { duration: 0.5 } }
+                        >
                                 <select
                                         value={ stateFilter }
                                         onChange={ ( e ) => setStateFilter( e.target.value ) }
@@ -131,76 +126,124 @@ const LabourService=() =>
                                                 </option>
                                         ) ) }
                                 </select>
-                        </div>
+                        </motion.div>
 
                         <div className={ styles.contentWrapper }>
-                                <div className={ styles.sidebar }>
+                                <motion.div
+                                        className={ styles.sidebar }
+                                        initial={ { x: -100, opacity: 0 } }
+                                        animate={ { x: 0, opacity: 1 } }
+                                        transition={ { duration: 0.5, delay: 0.2 } }
+                                >
                                         <button
                                                 className={ styles.postHiringButton }
                                                 onClick={ () => setIsFormVisible( !isFormVisible ) }
                                         >
-                                                Post Hiring
+                                                { isFormVisible? 'Close Form':'Post Hiring' }
                                         </button>
-                                </div>
+                                </motion.div>
 
-                                <div className={ styles.mainContent }>
-                                        { isFormVisible? (
-                                                <LabourForm />
-                                        ):selectedLabor? (
-                                                <div className={ styles.selectedLabourCard }>
-                                                        <h2>Labour Request Details</h2>
-                                                        <div className={ styles.labourRequestCard }>
-                                                                <Image
-                                                                        src="/dashboard/farm.png"
-                                                                        alt="Farm Image"
-                                                                        width={ 150 }
-                                                                        height={ 150 }
-                                                                />
-                                                                <div className={ styles.labourDetails }>
-                                                                        <h3>{ selectedLabor.purpose }</h3>
-                                                                        <p>{ selectedLabor.payment } per hour</p>
-                                                                        <p>{ selectedLabor.days } days</p>
-                                                                        <p>Location: { selectedLabor.city }, { selectedLabor.state }</p>
-                                                                </div>
-                                                                <button
-                                                                        className={ styles.backButton }
-                                                                        onClick={ () => setSelectedLabor( null ) }
-                                                                >
-                                                                        Back
-                                                                </button>
-                                                        </div>
-                                                </div>
-                                        ):(
-                                                <div className={ styles.labourList }>
-                                                        <h2>Available Labour Requests</h2>
-                                                        { filteredLaborRequests.length>0? (
-                                                                filteredLaborRequests.map( ( labor, index ) => (
-                                                                        <div key={ index } className={ styles.labourRequestCard }>
-                                                                                <Image
-                                                                                        src={ imageUrls[ index%imageUrls.length ] }
-                                                                                        alt="Farm Image"
-                                                                                        width={ 100 }
-                                                                                        height={ 100 }
-                                                                                />
-                                                                                <div className={ styles.labourDetails }>
-                                                                                        <h3>{ labor.purpose }</h3>
-                                                                                        <p>{ labor.payment } per hour</p>
-                                                                                        <p>{ labor.days } days</p>
-                                                                                </div>
-                                                                                <button
-                                                                                        className={ styles.checkoutButton }
-                                                                                        onClick={ () => setSelectedLabor( labor ) }
-                                                                                >
-                                                                                        Check Out
-                                                                                </button>
+                                <motion.div
+                                        className={ styles.mainContent }
+                                        initial={ { opacity: 0 } }
+                                        animate={ { opacity: 1 } }
+                                        transition={ { duration: 0.5, delay: 0.4 } }
+                                >
+                                        <AnimatePresence mode="wait">
+                                                { loading? (
+                                                        <motion.div
+                                                                key="loading"
+                                                                initial={ { opacity: 0 } }
+                                                                animate={ { opacity: 1 } }
+                                                                exit={ { opacity: 0 } }
+                                                                className={ styles.loadingSpinner }
+                                                        >
+                                                                <LoadingSpinner />
+                                                        </motion.div>
+                                                ):isFormVisible? (
+                                                        <motion.div
+                                                                key="form"
+                                                                initial={ { opacity: 0, y: 20 } }
+                                                                animate={ { opacity: 1, y: 0 } }
+                                                                exit={ { opacity: 0, y: -20 } }
+                                                        >
+                                                                <LabourForm onClose={ () => setIsFormVisible( false ) } />
+                                                        </motion.div>
+                                                ):selectedLabor? (
+                                                        <motion.div
+                                                                key="selected"
+                                                                initial={ { opacity: 0, scale: 0.9 } }
+                                                                animate={ { opacity: 1, scale: 1 } }
+                                                                exit={ { opacity: 0, scale: 0.9 } }
+                                                                className={ styles.selectedLabourCard }
+                                                        >
+                                                                <h2>Labour Request Details</h2>
+                                                                <div className={ styles.labourRequestCard }>
+                                                                        <Image
+                                                                                src="/dashboard/farm.png"
+                                                                                alt="Farm Image"
+                                                                                width={ 150 }
+                                                                                height={ 150 }
+                                                                        />
+                                                                        <div className={ styles.labourDetails }>
+                                                                                <h3>{ selectedLabor.purpose }</h3>
+                                                                                <p>{ selectedLabor.payment } per hour</p>
+                                                                                <p>{ selectedLabor.days } days</p>
+                                                                                <p>Location: { selectedLabor.city }, { selectedLabor.state }</p>
                                                                         </div>
-                                                                ) )
-                                                        ):(
-                                                                <p>No available labor requests.</p>
-                                                        ) }
-                                                </div>
-                                        ) }
-                                </div>
+                                                                        <button
+                                                                                className={ styles.backButton }
+                                                                                onClick={ () => setSelectedLabor( null ) }
+                                                                        >
+                                                                                Back
+                                                                        </button>
+                                                                </div>
+                                                        </motion.div>
+                                                ):(
+                                                        <motion.div
+                                                                key="list"
+                                                                initial={ { opacity: 0 } }
+                                                                animate={ { opacity: 1 } }
+                                                                exit={ { opacity: 0 } }
+                                                                className={ styles.labourList }
+                                                        >
+                                                                <h2>Available Labour Requests</h2>
+                                                                { filteredLaborRequests.length>0? (
+                                                                        filteredLaborRequests.map( ( labor, index ) => (
+                                                                                <motion.div
+                                                                                        key={ index }
+                                                                                        className={ styles.labourRequestCard }
+                                                                                        initial={ { opacity: 0, y: 20 } }
+                                                                                        animate={ { opacity: 1, y: 0 } }
+                                                                                        transition={ { delay: index*0.1 } }
+                                                                                >
+                                                                                        <Image
+                                                                                                src={ imageUrls[ index%imageUrls.length ] }
+                                                                                                alt="Farm Image"
+                                                                                                fill
+                                                                                                className={ styles.image }
+                                                                                                style={ { objectFit: 'cover' } }
+                                                                                        />
+                                                                                        <div className={ styles.labourDetails }>
+                                                                                                <h3>{ labor.purpose }</h3>
+                                                                                                <p>{ labor.payment } per hour</p>
+                                                                                                <p>{ labor.days } days</p>
+                                                                                        </div>
+                                                                                        <button
+                                                                                                className={ styles.checkoutButton }
+                                                                                                onClick={ () => setSelectedLabor( labor ) }
+                                                                                        >
+                                                                                                Check Out
+                                                                                        </button>
+                                                                                </motion.div>
+                                                                        ) )
+                                                                ):(
+                                                                        <p>No available labor requests.</p>
+                                                                ) }
+                                                        </motion.div>
+                                                ) }
+                                        </AnimatePresence>
+                                </motion.div>
                         </div>
                 </div>
         );

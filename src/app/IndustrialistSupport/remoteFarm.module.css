@@ -141,3 +141,73 @@
                 grid-row: auto;
         }
 }
+
+
+.labourerContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+}
+
+.labourerCard {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+}
+
+.labourerImage {
+        border-radius: 50%;
+        margin-bottom: 15px;
+}
+
+.labourerDetails {
+        margin-bottom: 15px;
+}
+
+.labourerName {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 8px;
+}
+
+.companyName {
+        font-size: 16px;
+        color: #6c757d;
+        margin-bottom: 5px;
+}
+
+.requirement {
+        font-size: 14px;
+        margin-bottom: 5px;
+}
+
+.place {
+        font-size: 14px;
+        color: #6c757d;
+}
+
+.labourerActions {
+        display: flex;
+        justify-content: space-between;
+}
+
+.acceptButton {
+        background-color: #28a745;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+}
+
+.rejectButton {
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+}

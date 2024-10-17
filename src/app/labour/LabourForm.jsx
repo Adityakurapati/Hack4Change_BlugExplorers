@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import styles from './labourForm.module.css';
 
-const LabourForm=() =>
+const LabourForm=( { onClose } ) =>
 {
         const [ laborRequest, setLaborRequest ]=useState( {
                 purpose: '',
                 payment: '',
                 days: '',
-                city: ''  // Added city field
+                city: '',
+                state: '',
         } );
+
+        const [ isSubmitting, setIsSubmitting ]=useState( false );
 
         const handleInputChange=( e ) =>
         {
@@ -20,20 +24,31 @@ const LabourForm=() =>
         const handleSubmit=async ( e ) =>
         {
                 e.preventDefault();
+                setIsSubmitting( true );
                 try
                 {
                         const queryString=new URLSearchParams( laborRequest ).toString();
-                        const response=await axios.get( `/api/labours/add?${ queryString }` );
-                        setLaborRequest( { purpose: '', payment: '', days: '', city: '' } ); // Reset city field
+                        await axios.get( `/api/labours/add?${ queryString }` );
+                        setLaborRequest( { purpose: '', payment: '', days: '', city: '', state: '' } );
                         alert( 'Labor request posted successfully!' );
+                        onClose();
                 } catch ( error )
                 {
                         console.error( 'Failed to post labor request', error );
+                        alert( 'Failed to post labor request. Please try again.' );
+                } finally
+                {
+                        setIsSubmitting( false );
                 }
         };
 
         return (
-                <div className={ styles.formContainer }>
+                <motion.div
+                        className={ styles.formContainer }
+                        initial={ { opacity: 0, y: 20 } }
+                        animate={ { opacity: 1, y: 0 } }
+                        exit={ { opacity: 0, y: -20 } }
+                >
                         <h2>Request For A Labour</h2>
                         <form onSubmit={ handleSubmit }>
                                 <div className={ styles.inputGroup }>
@@ -45,32 +60,35 @@ const LabourForm=() =>
                                                 onChange={ handleInputChange }
                                                 placeholder="Purpose"
                                                 className={ styles.input }
+                                                required
                                         />
                                 </div>
                                 <div className={ styles.inputGroup }>
                                         <label>How much will you pay per hour?</label>
                                         <input
-                                                type="text"
+                                                type="number"
                                                 name="payment"
                                                 value={ laborRequest.payment }
                                                 onChange={ handleInputChange }
                                                 placeholder="Payment"
                                                 className={ styles.input }
+                                                required
                                         />
                                 </div>
                                 <div className={ styles.inputGroup }>
                                         <label>For how many days do you need the labor?</label>
                                         <input
-                                                type="text"
+                                                type="number"
                                                 name="days"
                                                 value={ laborRequest.days }
                                                 onChange={ handleInputChange }
                                                 placeholder="Days"
                                                 className={ styles.input }
+                                                required
                                         />
                                 </div>
                                 <div className={ styles.inputGroup }>
-                                        <label>City</label> {/* New city field */ }
+                                        <label>City</label>
                                         <input
                                                 type="text"
                                                 name="city"
@@ -78,11 +96,32 @@ const LabourForm=() =>
                                                 onChange={ handleInputChange }
                                                 placeholder="City"
                                                 className={ styles.input }
+                                                required
                                         />
                                 </div>
-                                <button type="submit" className={ styles.submitButton }>Submit Request</button>
+                                <div className={ styles.inputGroup }>
+                                        <label>State</label>
+                                        <input
+                                                type="text"
+                                                name="state"
+                                                value={ laborRequest.state }
+                                                onChange={ handleInputChange }
+                                                placeholder="State"
+                                                className={ styles.input }
+                                                required
+                                        />
+                                </div>
+                                <motion.button
+                                        type="submit"
+                                        className={ styles.submitButton }
+                                        disabled={ isSubmitting }
+                                        whileHover={ { scale: 1.05 } }
+                                        whileTap={ { scale: 0.95 } }
+                                >
+                                        { isSubmitting? 'Submitting...':'Submit Request' }
+                                </motion.button>
                         </form>
-                </div>
+                </motion.div>
         );
 };
 

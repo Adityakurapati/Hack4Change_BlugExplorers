@@ -11,34 +11,44 @@ if ( typeof Highcharts==='object' )
 {
         Highcharts3D( Highcharts );
 }
-let counter=1;
 
 const COLORS=[ '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40' ];
 
 const RentalService=() =>
 {
         const [ machineries, setMachineries ]=useState( [] );
-        const [ newMachine, setNewMachine ]=useState( { available_quantity: '', provider: '', rent_amount: '', vehicle_type: '', contactNumber: '' } );
+        const [ newMachine, setNewMachine ]=useState( {
+                available_quantity: '',
+                provider: '',
+                rent_amount: '',
+                vehicle_type: '',
+                contactNumber: ''
+        } );
         const [ showForm, setShowForm ]=useState( false );
+        const [ loading, setLoading ]=useState( true );
+        const [ expandedMachineId, setExpandedMachineId ]=useState( null );
 
         useEffect( () =>
         {
-                // Fetch machineries data from the backend API
-                const fetchMachineries=async () =>
-                {
-                        try
-                        {
-                                const response=await axios.get( '/api/machineries/get' );
-                                const data=response.data.machineries? Object.values( response.data.machineries ):[];
-                                setMachineries( data );
-                        } catch ( error )
-                        {
-                                console.error( 'Failed to fetch machineries', error );
-                        }
-                };
-
                 fetchMachineries();
         }, [] );
+
+        const fetchMachineries=async () =>
+        {
+                try
+                {
+                        setLoading( true );
+                        const response=await axios.get( '/api/machineries/get' );
+                        const data=response.data.machineries? Object.values( response.data.machineries ):[];
+                        setMachineries( data );
+                } catch ( error )
+                {
+                        console.error( 'Failed to fetch machineries', error );
+                } finally
+                {
+                        setLoading( false );
+                }
+        };
 
         const handleInputChange=( e ) =>
         {
@@ -49,34 +59,50 @@ const RentalService=() =>
         const handleSubmit=async ( e ) =>
         {
                 e.preventDefault();
-
                 try
                 {
+                        setLoading( true );
                         const params=new URLSearchParams( newMachine ).toString();
                         await axios.get( `/api/machineries/add?${ params }` );
-                        setNewMachine( { available_quantity: '', provider: '', rent_amount: '', vehicle_type: '', contactNumber: '' } );
+                        setNewMachine( {
+                                available_quantity: '',
+                                provider: '',
+                                rent_amount: '',
+                                vehicle_type: '',
+                                contactNumber: ''
+                        } );
                         setShowForm( false );
-
-                        // Re-fetch the updated machineries list
-                        const response=await axios.get( '/api/machineries/get' );
-                        const data=response.data.machineries? Object.values( response.data.machineries ):[];
-                        setMachineries( data );
-
+                        await fetchMachineries();
                 } catch ( error )
                 {
                         console.error( 'Failed to add machine', error );
+                } finally
+                {
+                        setLoading( false );
                 }
         };
 
-        const handleGetButtonClick=async ( contactNumber ) =>
+        const handleGetButtonClick=async ( machineId ) =>
         {
-                try
+                if ( expandedMachineId===machineId )
                 {
-                        // Send a message to the contactNumber
-                        await axios.post( '/api/machineries/contact', { contactNumber } );
-                } catch ( error )
+                        setExpandedMachineId( null );
+                } else
                 {
-                        console.error( 'Failed to send message', error );
+                        setExpandedMachineId( machineId );
+                        try
+                        {
+                                const machine=machineries.find( m => m.id===machineId );
+                                if ( machine )
+                                {
+                                        await axios.post( '/api/machineries/contact', { contactNumber: machine.contactNumber } );
+                                        // Show a success message to the user
+                                }
+                        } catch ( error )
+                        {
+                                console.error( 'Failed to send message', error );
+                                // Show an error message to the user
+                        }
                 }
         };
 
@@ -93,9 +119,11 @@ const RentalService=() =>
                                 alpha: 45,
                                 beta: 0,
                         },
+                        backgroundColor: 'var(--bg-soft)',
                 },
                 title: {
                         text: 'Machinery Availability',
+                        style: { color: 'var(--text)' }
                 },
                 plotOptions: {
                         pie: {
@@ -104,46 +132,71 @@ const RentalService=() =>
                                 dataLabels: {
                                         enabled: true,
                                         format: '<b>{point.name}</b>: {point.y}',
+                                        style: { color: 'var(--text-soft)' }
                                 },
                         },
                 },
-                series: [
-                        {
-                                name: 'Count',
-                                data: machineries.map( ( machine, index ) => ( {
-                                        name: machine.vehicle_type,
-                                        y: parseInt( machine.available_quantity )||0, // Ensure that the count is an integer
-                                        color: COLORS[ index%COLORS.length ],
-                                } ) ),
-                        },
-                ],
+                series: [ {
+                        name: 'Count',
+                        data: machineries.map( ( machine, index ) => ( {
+                                name: machine.vehicle_type,
+                                y: parseInt( machine.available_quantity )||0,
+                                color: COLORS[ index%COLORS.length ],
+                        } ) ),
+                } ],
         };
 
         return (
                 <div className={ styles.container }>
                         <div className={ styles.machineList }>
                                 <h2>Available Machineries</h2>
-                                { machineries.map( ( machine, index ) => (
-                                        <div key={ index } className={ styles.machineItem }>
-                                                <Image
-                                                        key={ index }
-                                                        src={ `/rental/image${ counter++ }.png` }
-                                                        alt={ machine.vehicle_type }
-                                                        width={ 50 }
-                                                        height={ 50 }
-                                                        className={ styles.machineImage }
-                                                />
-                                                <span className={ styles.machineName }>{ machine.vehicle_type }</span>
-                                                <span className={ styles.locationIcon }>📍 { machine.provider }</span>
-                                                <span className={ styles.rentAmount }>${ machine.rent_amount }</span>
-                                                <button
-                                                        className={ styles.getButton }
-                                                        onClick={ () => handleGetButtonClick( machine.contactNumber ) }
-                                                >
-                                                        Get
-                                                </button>
+                                { loading? (
+                                        <div className={ styles.loader }>
+                                                <div className={ styles.spinner }></div>
+                                                <p>Loading machineries...</p>
                                         </div>
-                                ) ) }
+                                ):(
+                                        machineries.map( ( machine, index ) => (
+                                                <div key={ machine.id||index } className={ `${ styles.machineItem } ${ expandedMachineId===machine.id? styles.expanded:'' }` }>
+                                                        <div className={ styles.machineItemHeader }>
+                                                                <Image
+                                                                        src={ `/rental/image${ index+1 }.png` }
+                                                                        alt={ machine.vehicle_type }
+                                                                        width={ 50 }
+                                                                        height={ 50 }
+                                                                        className={ styles.machineImage }
+                                                                />
+                                                                <span className={ styles.machineName }>{ machine.vehicle_type }</span>
+                                                                <span className={ styles.locationIcon }>📍 { machine.provider }</span>
+                                                                <span className={ styles.rentAmount }>${ machine.rent_amount }</span>
+                                                                <button
+                                                                        className={ styles.getButton }
+                                                                        onClick={ () => handleGetButtonClick( machine.id ) }
+                                                                >
+                                                                        { expandedMachineId===machine.id? 'Close':'Get' }
+                                                                </button>
+                                                        </div>
+                                                        { expandedMachineId===machine.id&&(
+                                                                <div className={ styles.expandedContent }>
+                                                                        <Image
+                                                                                src={ `/rental/image${ index+1 }.png` }
+                                                                                alt={ machine.vehicle_type }
+                                                                                width={ 200 }
+                                                                                height={ 200 }
+                                                                                className={ styles.expandedImage }
+                                                                        />
+                                                                        <div className={ styles.detailedInfo }>
+                                                                                <p><strong>Vehicle Type:</strong> { machine.vehicle_type }</p>
+                                                                                <p><strong>Provider:</strong> { machine.provider }</p>
+                                                                                <p><strong>Rent Amount:</strong> ${ machine.rent_amount }</p>
+                                                                                <p><strong>Available Quantity:</strong> { machine.available_quantity }</p>
+                                                                                <p><strong>Contact Number:</strong> { machine.contactNumber }</p>
+                                                                        </div>
+                                                                </div>
+                                                        ) }
+                                                </div>
+                                        ) )
+                                ) }
                         </div>
                         <div className={ styles.rightSection }>
                                 <h2>Machinery Availability</h2>
@@ -160,62 +213,22 @@ const RentalService=() =>
                                         { showForm&&(
                                                 <form onSubmit={ handleSubmit } className={ styles.addMachineForm }>
                                                         <h3>Add Machine For Rent</h3>
-                                                        <div className={ styles.formGroup }>
-                                                                <input
-                                                                        type="text"
-                                                                        name="available_quantity"
-                                                                        value={ newMachine.available_quantity }
-                                                                        onChange={ handleInputChange }
-                                                                        placeholder="Available Quantity"
-                                                                        className={ styles.input }
-                                                                        required
-                                                                />
-                                                        </div>
-                                                        <div className={ styles.formGroup }>
-                                                                <input
-                                                                        type="text"
-                                                                        name="provider"
-                                                                        value={ newMachine.provider }
-                                                                        onChange={ handleInputChange }
-                                                                        placeholder="Provider"
-                                                                        className={ styles.input }
-                                                                        required
-                                                                />
-                                                        </div>
-                                                        <div className={ styles.formGroup }>
-                                                                <input
-                                                                        type="text"
-                                                                        name="rent_amount"
-                                                                        value={ newMachine.rent_amount }
-                                                                        onChange={ handleInputChange }
-                                                                        placeholder="Rent Amount"
-                                                                        className={ styles.input }
-                                                                        required
-                                                                />
-                                                        </div>
-                                                        <div className={ styles.formGroup }>
-                                                                <input
-                                                                        type="text"
-                                                                        name="vehicle_type"
-                                                                        value={ newMachine.vehicle_type }
-                                                                        onChange={ handleInputChange }
-                                                                        placeholder="Vehicle Type"
-                                                                        className={ styles.input }
-                                                                        required
-                                                                />
-                                                        </div>
-                                                        <div className={ styles.formGroup }>
-                                                                <input
-                                                                        type="text"
-                                                                        name="contactNumber"
-                                                                        value={ newMachine.contactNumber }
-                                                                        onChange={ handleInputChange }
-                                                                        placeholder="Contact Number"
-                                                                        className={ styles.input }
-                                                                        required
-                                                                />
-                                                        </div>
-                                                        <button type="submit" className={ styles.addButton }>Add Machine</button>
+                                                        { [ 'available_quantity', 'provider', 'rent_amount', 'vehicle_type', 'contactNumber' ].map( ( field ) => (
+                                                                <div key={ field } className={ styles.formGroup }>
+                                                                        <input
+                                                                                type="text"
+                                                                                name={ field }
+                                                                                value={ newMachine[ field ] }
+                                                                                onChange={ handleInputChange }
+                                                                                placeholder={ field.split( '_' ).map( word => word.charAt( 0 ).toUpperCase()+word.slice( 1 ) ).join( ' ' ) }
+                                                                                className={ styles.input }
+                                                                                required
+                                                                        />
+                                                                </div>
+                                                        ) ) }
+                                                        <button type="submit" className={ styles.addButton }>
+                                                                { loading? 'Adding...':'Add Machine' }
+                                                        </button>
                                                 </form>
                                         ) }
                                 </div>

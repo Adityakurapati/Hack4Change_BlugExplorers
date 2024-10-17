@@ -19,7 +19,7 @@ const Navbar=( { user } ) =>
         const router=useRouter();
         const pathname=usePathname();
         const isHome=useActive( '/' );
-        const isLogin=useActive( '/login' )||useActive( '/register' );
+        const isLogin=useActive( '/login' )||useActive( '/register' )||useActive( '/RentalService' );
         const isSoil=useActive( '/soil_control' );
         const isDashboard=useActive( '/Dashboard' );
         const isLabour=useActive( '/labour' ); // Added check for '/labour' path
